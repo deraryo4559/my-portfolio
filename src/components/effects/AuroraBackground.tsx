@@ -1,58 +1,40 @@
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
 
 const safeNum = (val: number, fallback = 0) => {
-  if (typeof val !== "number" || isNaN(val) || !isFinite(val)) return fallback;
+  if (typeof val !== 'number' || isNaN(val) || !isFinite(val)) return fallback;
   return val;
 };
 
 const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const uniformsRef = useRef<any>(null);
   const animationIdRef = useRef<number>(0);
-  const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2(0.5, 0.5));
+  const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Sync scroll progress
+  // Sync scroll progress with shader uniform
   useEffect(() => {
     if (uniformsRef.current) {
       uniformsRef.current.uScroll.value = safeNum(scrollProgress);
     }
   }, [scrollProgress]);
 
-  // Mouse Interaction
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current.x = e.clientX / window.innerWidth;
-      mouseRef.current.y = 1.0 - e.clientY / window.innerHeight;
-      
-      if (uniformsRef.current) {
-        // Smoothly interpolate mouse position in shader if needed, 
-        // but direct assignment is fine for general background ambient
-        uniformsRef.current.uMouse.value.copy(mouseRef.current);
-      }
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // --- Init Three.js ---
     const width = window.innerWidth;
     const height = window.innerHeight;
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false }); // Antialias false for performance
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(width, height);
-    // Limit pixel ratio for performance on high-DPI screens
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     containerRef.current.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
 
-    // --- Enhanced Shader ---
+    // --- Shader for Realistic Aurora with FBM ---
     const vertexShader = `
       varying vec2 vUv;
       void main() {
@@ -68,107 +50,103 @@ const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
       uniform vec2 uMouse;
       varying vec2 vUv;
 
-      // --- Noise Functions ---
-      // 2D Random
-      float random(in vec2 st) {
-        return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+      // Simplex 2D noise
+      vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+      float snoise(vec2 v){
+        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                 -0.577350269189626, 0.024390243902439);
+        vec2 i  = floor(v + dot(v, C.yy) );
+        vec2 x0 = v -   i + dot(i, C.xx);
+        vec2 i1;
+        i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+        vec4 x12 = x0.xyxy + C.xxzz;
+        x12.xy -= i1;
+        i = mod(i, 289.0);
+        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+        + i.x + vec3(0.0, i1.x, 1.0 ));
+        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+        m = m*m ;
+        m = m*m ;
+        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+        vec3 h = abs(x) - 0.5;
+        vec3 ox = floor(x + 0.5);
+        vec3 a0 = x - ox;
+        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+        vec3 g;
+        g.x  = a0.x  * x0.x  + h.x  * x0.y;
+        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+        return 130.0 * dot(m, g);
       }
 
-      // 2D Noise
-      float noise(in vec2 st) {
-        vec2 i = floor(st);
-        vec2 f = fract(st);
-        // Cubic Hermite Interpolation
-        float a = random(i);
-        float b = random(i + vec2(1.0, 0.0));
-        float c = random(i + vec2(0.0, 1.0));
-        float d = random(i + vec2(1.0, 1.0));
-        vec2 u = f * f * (3.0 - 2.0 * f);
-        return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-      }
-
-      // Fractal Brownian Motion (FBM)
-      #define OCTAVES 5
-      float fbm(in vec2 st) {
+      // FBM (Fractal Brownian Motion) for more detail
+      float fbm(vec2 st) {
         float value = 0.0;
         float amplitude = 0.5;
-        float frequency = 0.0;
-        
-        // Rotate to reduce grid artifacts
-        mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
-
-        for (int i = 0; i < OCTAVES; i++) {
-          value += amplitude * noise(st);
-          st = rot * st * 2.0 + vec2(100.0); // Shift to avoid center artifacts
+        for (int i = 0; i < 3; i++) {
+          value += amplitude * snoise(st);
+          st *= 2.0;
           amplitude *= 0.5;
         }
         return value;
       }
 
-      // --- Aurora Logic ---
       void main() {
-        vec2 st = vUv;
-        st.x *= uResolution.x / uResolution.y;
+        vec2 uv = vUv;
+        uv.x *= uResolution.x / uResolution.y; // Correct aspect ratio
 
-        float time = uTime * 0.15; // Slower base time
+        float t = uTime * 0.15;
         
-        // Mouse Influence (Subtle warp)
-        vec2 mouseOffset = (uMouse - 0.5) * 0.2;
+        // Interactive mouse influence
+        vec2 mouseEffect = (uMouse - 0.5) * 0.2;
         
-        // Coordinates for FBM
-        // Distort the coordinates to create "curtains"
-        vec2 q = vec2(0.);
-        q.x = fbm( st + 0.00 * time + mouseOffset);
-        q.y = fbm( st + vec2(1.0));
-
-        vec2 r = vec2(0.);
-        // Add flow movement
-        r.x = fbm( st + 1.0 * q + vec2(1.7, 9.2) + 0.15 * time );
-        r.y = fbm( st + 1.0 * q + vec2(8.3, 2.8) + 0.126 * time);
-
-        float f = fbm(st + r + mouseOffset * 0.5);
-
-        // --- Color Palette ---
-        // Deep space background mix
-        vec3 color = vec3(0.0, 0.0, 0.05);
-
-        // Mix colors based on FBM value (f) and coordinate (q)
-        // Emerald Green
-        vec3 c1 = vec3(0.1, 0.9, 0.6); 
-        // Deep Purple
-        vec3 c2 = vec3(0.6, 0.1, 0.9);
-        // Magenta/Pink (Highlights)
-        vec3 c3 = vec3(0.9, 0.2, 0.5);
-        // Cyan/Blue
-        vec3 c4 = vec3(0.1, 0.5, 0.9);
-
-        // Mix logic
-        float mix1 = smoothstep(0.2, 0.7, f);
-        float mix2 = smoothstep(0.4, 0.9, length(q));
-        float mix3 = smoothstep(0.0, 1.0, r.x);
-
-        vec3 auroraColor = mix(c1, c2, mix1);
-        auroraColor = mix(auroraColor, c3, mix2 * 0.6);
-        auroraColor = mix(auroraColor, c4, st.y * 0.5); // Fade to blue at bottom
-
-        // Scroll influence: shift towards red/warm
-        float scrollMix = clamp(uScroll * 1.2, 0.0, 1.0);
-        vec3 warmColor = vec3(1.0, 0.3, 0.2);
-        auroraColor = mix(auroraColor, warmColor, scrollMix * 0.4);
-
-        // Alpha Masking (Curtain shape)
-        // Create vertical streaks
-        float alpha = f * 1.8; 
-        alpha *= smoothstep(0.0, 0.3, vUv.y); // Fade in from bottom
-        alpha *= smoothstep(1.0, 0.6, vUv.y); // Fade out at top
+        // Coordinates for aurora layers
+        vec2 st = uv;
+        st.x += st.y * 0.1; // Slight tilt
         
-        // Add glow core
-        color = mix(color, auroraColor, clamp(alpha, 0.0, 1.0));
+        // Layer 1: Large, slow moving waves (Green/Base)
+        float n1 = fbm(vec2(st.x * 1.5 + t * 0.5 + mouseEffect.x, st.y * 0.5 - t * 0.2));
         
-        // Add extra "shine"
-        color += c3 * pow(f, 3.0) * 0.4;
+        // Layer 2: Detailed, faster streaks (Purple/Detail)
+        float n2 = fbm(vec2(st.x * 3.0 - t * 0.8 - mouseEffect.x, st.y * 2.0 + t * 0.3));
+        
+        // Combine noises to create "curtain" effect
+        float auroraShape = n1 * 0.6 + n2 * 0.4;
+        
+        // Sharpen the shape to define rays
+        float rays = smoothstep(0.2, 0.8, auroraShape);
+        
+        // Vertical fade for bottom and top
+        float fade = smoothstep(0.0, 0.3, uv.y) * smoothstep(1.0, 0.6, uv.y);
+        
+        // Intensity modulation by scroll
+        float scrollMod = 1.0 + uScroll * 0.5;
+        
+        float finalAlpha = rays * fade * 0.7 * scrollMod;
 
-        gl_FragColor = vec4(color, 1.0);
+        // Color Palette (Deep Space -> Emerald -> Magenta/Purple)
+        vec3 colorBg = vec3(0.0, 0.02, 0.05); // Deep Space Blue/Black
+        vec3 color1 = vec3(0.0, 0.8, 0.6);    // Emerald Green
+        vec3 color2 = vec3(0.6, 0.0, 0.8);    // Deep Purple
+        vec3 color3 = vec3(1.0, 0.2, 0.6);    // Magenta (High intensity)
+
+        // Mixing colors based on noise value and vertical position
+        vec3 auroraColor = mix(color1, color2, uv.y * 1.2 + n1 * 0.5);
+        auroraColor = mix(auroraColor, color3, smoothstep(0.6, 1.0, n2));
+        
+        // Scroll effect shifts hue slightly towards red/warm
+        auroraColor = mix(auroraColor, vec3(1.0, 0.3, 0.3), uScroll * 0.3);
+
+        // Add "stars" or noise grain for texture
+        float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+        auroraColor += grain * 0.03;
+
+        // Composition
+        vec3 finalColor = mix(colorBg, auroraColor, finalAlpha);
+        
+        // Glow boost
+        finalColor += auroraColor * finalAlpha * 0.3;
+
+        gl_FragColor = vec4(finalColor, 1.0); // Background is opaque to cover previous elements
       }
     `;
 
@@ -185,85 +163,75 @@ const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
       vertexShader,
       fragmentShader,
       uniforms,
+      transparent: false, // Opaque to serve as full background
       depthWrite: false,
-      depthTest: false,
     });
 
     const plane = new THREE.Mesh(geometry, material);
     scene.add(plane);
 
-    // --- Stars (Separate System) ---
+    // --- Star Field (Foreground Layer) ---
     const starGeo = new THREE.BufferGeometry();
     const starCount = 600;
     const posArray = new Float32Array(starCount * 3);
-    const sizeArray = new Float32Array(starCount);
+    const sizesArray = new Float32Array(starCount);
     
-    for (let i = 0; i < starCount; i++) {
-      // Random spread
-      posArray[i * 3] = (Math.random() - 0.5) * 4;
-      posArray[i * 3 + 1] = (Math.random() - 0.5) * 4;
-      posArray[i * 3 + 2] = -1.0; // Background layer
-      
-      // Random size
-      sizeArray[i] = Math.random();
+    for(let i=0; i<starCount; i++) {
+        posArray[i*3] = (Math.random() - 0.5) * 4; 
+        posArray[i*3+1] = (Math.random() - 0.5) * 4;
+        posArray[i*3+2] = 0.1; // Slightly in front of background
+        sizesArray[i] = Math.random();
     }
-    
-    starGeo.setAttribute("position", new THREE.BufferAttribute(posArray, 3));
-    starGeo.setAttribute("aSize", new THREE.BufferAttribute(sizeArray, 1));
+    starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    starGeo.setAttribute('size', new THREE.BufferAttribute(sizesArray, 1));
 
-    const starMat = new THREE.ShaderMaterial({
-        uniforms: {
-            uTime: uniforms.uTime,
-        },
-        vertexShader: `
-            attribute float aSize;
-            varying float vAlpha;
-            uniform float uTime;
-            void main() {
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_Position = projectionMatrix * mvPosition;
-                gl_PointSize = aSize * 2.5; // Base size
-                
-                // Twinkle effect
-                float twinkle = sin(uTime * 2.0 + position.x * 10.0 + position.y * 5.0);
-                vAlpha = 0.5 + 0.5 * twinkle;
-            }
-        `,
-        fragmentShader: `
-            varying float vAlpha;
-            void main() {
-                // Circular particle
-                vec2 coord = gl_PointCoord - vec2(0.5);
-                if(length(coord) > 0.5) discard;
-                
-                gl_FragColor = vec4(1.0, 1.0, 1.0, vAlpha * 0.8);
-            }
-        `,
-        transparent: true,
-        depthWrite: false,
+    const starMat = new THREE.PointsMaterial({
+      size: 0.008,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true
     });
-
+    
     const stars = new THREE.Points(starGeo, starMat);
     scene.add(stars);
 
+    // --- Animation ---
     const animate = () => {
       animationIdRef.current = requestAnimationFrame(animate);
-      uniforms.uTime.value += 0.005; // Slower, smoother time step
+      
+      // Smooth mouse interpolation
+      uniforms.uMouse.value.x += (mouseRef.current.x - uniforms.uMouse.value.x) * 0.05;
+      uniforms.uMouse.value.y += (mouseRef.current.y - uniforms.uMouse.value.y) * 0.05;
+      
+      uniforms.uTime.value += 0.01;
+      
+      // Subtle star movement
+      stars.rotation.z += 0.0002;
+
       renderer.render(scene, camera);
     };
     animate();
 
+    // --- Event Listeners ---
     const handleResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       renderer.setSize(w, h);
       uniforms.uResolution.value.set(w, h);
     };
-    window.addEventListener("resize", handleResize);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseRef.current.x = e.clientX / window.innerWidth;
+      mouseRef.current.y = 1.0 - (e.clientY / window.innerHeight); // Invert Y for GLSL
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('mousemove', handleMouseMove);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationIdRef.current);
       if (containerRef.current && renderer.domElement) {
         containerRef.current.removeChild(renderer.domElement);
@@ -276,12 +244,7 @@ const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
     };
   }, []);
 
-  return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 z-0 bg-black pointer-events-none"
-    />
-  );
+  return <div ref={containerRef} className="fixed inset-0 z-0 bg-black pointer-events-none" />;
 };
 
 export default AuroraBackground;
