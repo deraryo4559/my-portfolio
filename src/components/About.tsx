@@ -54,8 +54,8 @@ const About = () => {
           <div className="space-y-6">
             <AnimatedSection animation="slide-right" delay={200}>
               <p className="text-lg text-gray-700 leading-relaxed">
-                こんにちは！私は情熱的なフルスタック開発者です。
-                モダンなWeb技術を使って、ユーザー体験を重視したアプリケーションを開発しています。
+                こんにちは！空飛ぶカメラマンです。
+                ドローンと一眼カメラであなたの思い出を。
               </p>
             </AnimatedSection>
             <AnimatedSection animation="slide-right" delay={400}>
