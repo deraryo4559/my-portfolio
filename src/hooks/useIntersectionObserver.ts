@@ -26,6 +26,9 @@ export const useIntersectionObserver = ({
         
         if (isVisible && !hasIntersected) {
           setHasIntersected(true)
+          if (triggerOnce) {
+            observer.disconnect()
+          }
         }
       },
       {
