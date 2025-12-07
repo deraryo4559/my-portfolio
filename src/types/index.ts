@@ -1,4 +1,4 @@
-export type Page = 'home' | 'works' | 'service' | 'news' | 'contact';
+export type Page = 'home' | 'works' | 'service' | 'news' | 'contact' | 'photographer' | 'ai-photographer';
 export type WorkCategory = 'All' | 'Cityscape' | 'Nature' | 'Portrait' | 'Commercial';
 
 export interface NewsItem {
@@ -13,7 +13,8 @@ export interface WorkItem {
   id: number;
   title: string;
   category: WorkCategory;
-  imageColor: string;
+  image: string;
+  imageColor?: string;
   height: string;
   date: string;
   equipment: string;

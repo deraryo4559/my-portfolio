@@ -7,8 +7,8 @@ const WorkModal = ({ work, onClose }: { work: WorkItem | null; onClose: () => vo
     <div className="fixed inset-0 z-[60] bg-zinc-950/95 flex items-center justify-center p-4 md:p-12 animate-fade-in" onClick={onClose}>
       <button onClick={onClose} className="absolute top-6 right-6 text-white hover:rotate-90 transition-transform duration-300"><X size={32} /></button>
       <div className="flex flex-col md:flex-row gap-12 max-w-7xl w-full h-full md:h-auto items-center" onClick={e => e.stopPropagation()}>
-        <div className={`w-full md:w-2/3 h-[50vh] md:h-[80vh] ${work.imageColor} relative shadow-2xl overflow-hidden rounded-sm group`}>
-            <div className="absolute inset-0 flex items-center justify-center text-white/10 font-serif text-9xl">IMG</div>
+        <div className={`w-full md:w-2/3 h-[50vh] md:h-[80vh] relative shadow-2xl overflow-hidden rounded-sm group`}>
+            <img src={work.image} alt={work.title} className="w-full h-full object-contain bg-zinc-900" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         </div>
         <div className="w-full md:w-1/3 text-white space-y-8 animate-fade-in-up">

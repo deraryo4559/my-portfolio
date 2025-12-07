@@ -6,7 +6,7 @@ const Footer = ({ onNavigate }: { onNavigate: (page: Page) => void }) => (
     <div className="container mx-auto px-6 flex flex-col items-center">
       <div className="flex items-center gap-2 mb-8 opacity-50">
         <Camera size={16} className="text-zinc-500" />
-        <span className="text-lg font-serif font-bold text-zinc-500 tracking-widest">K.PHOTO</span>
+        <span className="text-lg font-serif font-bold text-zinc-500 tracking-widest">R.PHOTO</span>
       </div>
       <div className="flex gap-8 mb-8 text-xs tracking-widest text-zinc-600">
         <button onClick={() => onNavigate('works')} className="hover:text-zinc-400 transition-colors">WORKS</button>
@@ -14,7 +14,7 @@ const Footer = ({ onNavigate }: { onNavigate: (page: Page) => void }) => (
         <button onClick={() => onNavigate('contact')} className="hover:text-zinc-400 transition-colors">CONTACT</button>
       </div>
       <p className="text-zinc-700 text-[10px] tracking-wider">
-        &copy; 2025 K.PHOTO PORTFOLIO. All Rights Reserved.
+        &copy; 2025 小野寺諒 / R.PHOTO PORTFOLIO. All Rights Reserved.
       </p>
     </div>
   </footer>

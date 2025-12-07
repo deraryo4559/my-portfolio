@@ -35,11 +35,14 @@ const Works = ({ onSelectWork }: { onSelectWork: (work: WorkItem) => void }) => 
           <FadeIn key={work.id} delay={idx * 100} className="break-inside-avoid">
             <div onClick={() => onSelectWork(work)}>
               <TiltCard className="group cursor-pointer relative">
-                <div className={`w-full ${work.height} ${work.imageColor} relative overflow-hidden rounded-sm`}>
+                <div className={`w-full relative overflow-hidden rounded-sm`}>
+                  <img
+                    src={work.image}
+                    alt={work.title}
+                    className={`w-full ${work.height} object-cover transition-transform duration-700 group-hover:scale-110`}
+                    loading="lazy"
+                  />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
-                  <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-serif text-4xl opacity-20 group-hover:scale-110 transition-transform duration-700">
-                    IMG
-                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                       <span className="text-xs text-zinc-400 uppercase tracking-widest mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{work.category}</span>
                       <h3 className="text-xl font-serif text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">{work.title}</h3>

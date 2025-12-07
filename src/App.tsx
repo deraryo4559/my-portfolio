@@ -1,20 +1,22 @@
-import { useState, useEffect } from 'react';
-import ErrorBoundary from './components/ui/ErrorBoundary';
-import ParticleBackground from './components/effects/ParticleBackground';
-import CustomCursor from './components/effects/CustomCursor';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-import Home from './components/sections/Home';
-import Works from './components/sections/Works';
-import Service from './components/sections/Service';
-import News from './components/sections/News';
-import Contact from './components/sections/Contact';
-import WorkModal from './components/ui/WorkModal';
-import NewsModal from './components/ui/NewsModal';
-import { Page, WorkItem, NewsItem } from './types';
+import { useState, useEffect } from "react";
+import ErrorBoundary from "./components/ui/ErrorBoundary";
+import ParticleBackground from "./components/effects/ParticleBackground";
+import CustomCursor from "./components/effects/CustomCursor";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import Home from "./components/sections/Home";
+import Works from "./components/sections/Works";
+import Service from "./components/sections/Service";
+import News from "./components/sections/News";
+import Contact from "./components/sections/Contact";
+import Photographer from "./components/sections/Photographer";
+import AiPhotographer from "./components/sections/AiPhotographer";
+import WorkModal from "./components/ui/WorkModal";
+import NewsModal from "./components/ui/NewsModal";
+import { Page, WorkItem, NewsItem } from "./types";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentPage, setCurrentPage] = useState<Page>("home");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [selectedWork, setSelectedWork] = useState<WorkItem | null>(null);
 
@@ -26,20 +28,22 @@ export default function App() {
     <ErrorBoundary>
       <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans selection:bg-white selection:text-black overflow-x-hidden">
         {/* Background is handled within Home component for better control, or globally if preferred */}
-        {currentPage !== 'home' && <ParticleBackground />} 
+        {currentPage !== "home" && <ParticleBackground />}
         <CustomCursor />
-        
+
         <Header currentPage={currentPage} onNavigate={setCurrentPage} />
 
         <main className="pt-20 min-h-screen relative z-10">
-          {currentPage === 'home' && <Home onNavigate={setCurrentPage} />}
-          {currentPage === 'works' && <Works onSelectWork={setSelectedWork} />}
-          {currentPage === 'service' && <Service onNavigate={setCurrentPage} />}
-          {currentPage === 'news' && <News onSelectNews={setSelectedNews} />}
-          {currentPage === 'contact' && <Contact />}
+          {currentPage === "home" && <Home onNavigate={setCurrentPage} />}
+          {currentPage === "works" && <Works onSelectWork={setSelectedWork} />}
+          {currentPage === "service" && <Service onNavigate={setCurrentPage} />}
+          {currentPage === "news" && <News onSelectNews={setSelectedNews} />}
+          {currentPage === "contact" && <Contact />}
+          {currentPage === "photographer" && <Photographer onNavigate={setCurrentPage} />}
+          {currentPage === "ai-photographer" && <AiPhotographer onNavigate={setCurrentPage} />}
         </main>
 
-        {currentPage !== 'home' && <Footer onNavigate={setCurrentPage} />}
+        {currentPage !== "home" && <Footer onNavigate={setCurrentPage} />}
 
         <WorkModal work={selectedWork} onClose={() => setSelectedWork(null)} />
         <NewsModal news={selectedNews} onClose={() => setSelectedNews(null)} />

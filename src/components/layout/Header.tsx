@@ -24,7 +24,7 @@ const Header = ({ currentPage, onNavigate }: { currentPage: Page; onNavigate: (p
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div onClick={() => onNavigate('home')} className="text-xl font-serif font-bold text-white tracking-widest cursor-pointer flex items-center gap-3 hover:opacity-80 transition-opacity z-50">
             <div className="border border-white p-1"><Camera size={16} /></div>
-            <span>K.PHOTO</span>
+            <span>R.PHOTO</span>
           </div>
           <nav className="hidden md:flex gap-10">
             {navItems.map(page => <NavLink key={page} page={page} />)}
