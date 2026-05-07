@@ -6,10 +6,16 @@ const safeNum = (val: number, fallback = 0) => {
   return val;
 };
 
+type AuroraUniforms = {
+  uTime: { value: number };
+  uScroll: { value: number };
+  uResolution: { value: THREE.Vector2 };
+};
+
 const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const uniformsRef = useRef<any>(null);
+  const uniformsRef = useRef<AuroraUniforms | null>(null);
   const animationIdRef = useRef<number>(0);
 
   // Sync scroll progress with shader uniform
@@ -20,7 +26,8 @@ const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
   }, [scrollProgress]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     // --- Init Three.js ---
     const width = window.innerWidth;
@@ -34,7 +41,7 @@ const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    containerRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
     // --- Shader for Realistic Aurora ---
@@ -198,8 +205,8 @@ const AuroraBackground = ({ scrollProgress }: { scrollProgress: number }) => {
     return () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationIdRef.current);
-      if (containerRef.current && renderer.domElement) {
-        containerRef.current.removeChild(renderer.domElement);
+      if (renderer.domElement.parentNode === container) {
+        container.removeChild(renderer.domElement);
       }
       geometry.dispose();
       material.dispose();

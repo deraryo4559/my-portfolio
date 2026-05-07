@@ -1,554 +1,376 @@
-import { NewsItem, WorkItem, ServiceItem, FaqItem } from "../types";
+import { FaqItem, FlowItem, ServiceItem, WorkItem } from '../types';
 
-// Images
-import img1 from "../images/1.jpg";
-import img2 from "../images/2.jpg";
-import img3 from "../images/3.jpg";
-import img4 from "../images/4.jpg";
-import img5 from "../images/5.jpg";
-import img6 from "../images/6.jpg";
-import img7 from "../images/7.jpg";
-import img8 from "../images/8.jpg";
-import img9 from "../images/9.jpg";
-import img10 from "../images/10.jpg";
-import img11 from "../images/11.jpg";
-import img12 from "../images/12.jpg";
-import img13 from "../images/13.jpg";
-import img14 from "../images/14.jpg";
-import img15 from "../images/15.jpg";
-import img16 from "../images/16.jpg";
-import img17 from "../images/17.jpg";
-import img18 from "../images/18.jpg";
-import img19 from "../images/19.jpg";
-import img20 from "../images/20.jpg";
-import img21 from "../images/21.jpg";
-import img22 from "../images/22.jpg";
-import img23 from "../images/23.jpg";
-import img24 from "../images/24.jpg";
-import img25 from "../images/25.jpg";
-import img26 from "../images/26.jpg";
-import img27 from "../images/27.jpg";
-import img28 from "../images/28.jpg";
-import img29 from "../images/29.jpg";
-import img30 from "../images/30.jpg";
-import img31 from "../images/31.jpg";
-import img32 from "../images/32.jpg";
-import img33 from "../images/33.jpg";
-import img34 from "../images/34.jpg";
-import img35 from "../images/35.jpg";
-import img36 from "../images/36.jpg";
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+const portfolioImage = (id: number) => asset(`images/portfolio/${id}.jpg`);
 
-export const NEWS_DATA: NewsItem[] = [
-  {
-    id: 1,
-    date: "2025.11.24",
-    category: "Event",
-    title: "個展「静寂の音」開催のお知らせ",
-    content:
-      "東京・青山のギャラリーにて、3年ぶりとなる個展を開催いたします。今回は「都市の静寂」をテーマに撮り下ろした新作20点を展示します。\n\n期間：2025年12月1日〜12月15日\n場所：青山Blue Gallery",
-  },
-  {
-    id: 2,
-    date: "2025.10.15",
-    category: "Work",
-    title: "雑誌「Life & Light」11月号 表紙撮影",
-    content:
-      "光の表現について特集された今月号にて、表紙写真と巻頭インタビューを担当させていただきました。全国の書店にて発売中です。",
-  },
-  {
-    id: 3,
-    date: "2025.09.01",
-    category: "Info",
-    title: "Webサイトリニューアル",
-    content:
-      "より作品の世界観をお伝えできるよう、ポートフォリオサイトを一新いたしました。",
-  },
-];
+export const HERO_IMAGE = portfolioImage(18);
+export const ABOUT_IMAGE = asset('images/portfolio/about.jpg');
+export const CONTACT_IMAGE = portfolioImage(24);
 
 export const WORKS_DATA: WorkItem[] = [
   {
-    id: 1,
-    title: "Ethereal Dawn",
-    category: "Nature",
-    image: img1,
-    height: "h-96",
-    date: "2025.04",
-    equipment: "LUMIX S5",
-    location: "Nagano, Japan",
-    description:
-      "雲海の上、世界が目覚める瞬間。黄金色の光が霧を染め上げ、静寂と躍動が交差する。ドローンによる高度150mからの視点は、地上では決して見ることのできない地球の鼓動を捉えている。光の階調（グラデーション）を最大限に残すため、早朝のマジックアワーに撮影。",
-  },
-  {
-    id: 2,
-    title: "秋風とマスク越しの瞳",
-    category: "Portrait",
-    image: img2,
-    height: "h-64",
-    date: "2024.11",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "秋色に染まった木々を背景に、ふと振り返った女性を捉えています。白いマスクをしていても、その澄んだ瞳からは穏やかな表情が伝わってきます。柔らかな自然光が髪や肩を包み込み、特定の時代の空気感と、季節の移ろいを感じさせる静かなポートレートです。",
-  },
-  {
-    id: 3,
-    title: "Silent Portrait",
-    category: "Portrait",
-    image: img3,
-    height: "h-[500px]",
-    date: "2025.02",
-    equipment: "LUMIX S5",
-    location: "Kyoto",
-    description:
-      "被写体の内面にある静けさを引き出す。余計な演出を排し、自然光のみで撮影。瞳の奥にある物語を想像させるような、普遍的な強さを持つポートレート。背景のボケ味（Bokhe）が、被写体の存在感をより一層際立たせている。",
-  },
-  {
-    id: 4,
-    title: "Neon Reflections",
-    category: "Cityscape",
-    image: img4,
-    height: "h-72",
-    date: "2025.01",
-    equipment: "LUMIX S5",
-    location: "Tokyo, Shibuya",
-    description:
-      "雨上がりの夜、ネオンサインが路面に反射する瞬間を捉えた。水たまりが鏡となり、現実と虚像が交差する。都市の喧騒が、一瞬の静けさに包まれる。",
-  },
-  {
-    id: 5,
-    title: "Urban Geometry",
-    category: "Cityscape",
-    image: img5,
-    height: "h-80",
-    date: "2024.12",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "建築物の幾何学的な美しさを、ドローンによる俯瞰視点で表現。直線と曲線が織りなす都市のリズムを、光と影のコントラストで強調している。",
-  },
-  {
-    id: 6,
-    title: "Spring Blossoms",
-    category: "Nature",
-    image: img6,
-    height: "h-64",
-    date: "2025.05",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "桜の季節、満開の花びらが舞い散る瞬間。柔らかなピンクと青空のコントラストが、春の喜びを表現している。",
-  },
-  {
-    id: 7,
-    title: "春色の共演",
-    category: "Nature",
-    image: img7,
-    height: "h-[400px]",
-    date: "2024.08",
-    equipment: "LUMIX S5",
-    location: "Shizuoka",
-    description:
-      "鮮やかなピンク色の河津桜（または早咲きの桜）と、手前の黄色い菜の花が織りなす春の風景です。前ボケに使われた黄色の花が写真に奥行きを与え、青空とのコントラストも相まって、視界いっぱいに春の喜びが広がるような、明るく華やかな一枚です。",
-  },
-  {
-    id: 8,
-    title: "岩場の特等席",
-    category: "Nature",
-    image: img8,
-    height: "h-80",
-    date: "2024.10",
-    equipment: "LUMIX S5",
-    location: "Seaside",
-    description:
-      "海辺と思われる岩場で、気持ちよさそうに体を伸ばしている猫の写真です。背景のボケた青色が海や空の広がりを連想させ、ザラついた岩の質感と猫の毛並みの柔らかさの対比が面白い一枚。猫のリラックスした様子から、穏やかな午後の時間の流れを感じます。",
-  },
-  {
-    id: 9,
-    title: "海辺の指定席",
-    category: "Nature",
-    image: img9,
-    height: "h-64",
-    date: "2024.09",
-    equipment: "LUMIX S5",
-    location: "Seaside",
-    description:
-      "海辺の岩場でくつろぐ猫たちです。手前の猫の凛とした横顔にピントを合わせつつ、背景にボケたもう1匹を配置することで、彼らの関係性やその場の空間の広がりを感じさせます。日向ぼっこの暖かさと潮風の香り、そして猫たちの自由な時間が流れる癒やしの一枚です。",
-  },
-  {
-    id: 10,
-    title: "都市の幾何学",
-    category: "Cityscape",
-    image: img10,
-    height: "h-96",
-    date: "2025.03",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "高層ビル群が織りなす幾何学的なパターン。ドローンによる真上からの視点で、都市の構造美を捉えている。",
-  },
-  {
-    id: 11,
-    title: "Sunset Over City",
-    category: "Cityscape",
-    image: img11,
-    height: "h-[500px]",
-    date: "2024.07",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "夕暮れ時の都市を、ドローンで撮影。オレンジ色の光がビルを染め上げ、一日の終わりを告げる美しい瞬間。",
-  },
-  {
-    id: 12,
-    title: "Mountain Vista",
-    category: "Nature",
-    image: img12,
-    height: "h-72",
-    date: "2024.06",
-    equipment: "LUMIX S5",
-    location: "Nagano",
-    description:
-      "山々が連なる壮大な風景。雲が山の稜線を撫でるように流れ、自然の雄大さを表現している。",
-  },
-  {
-    id: 13,
-    title: "Portrait in Light",
-    category: "Portrait",
-    image: img13,
-    height: "h-80",
-    date: "2025.01",
-    equipment: "LUMIX S5",
-    location: "Studio",
-    description:
-      "窓からの自然光を活かしたポートレート。柔らかな光が被写体の表情を優しく包み込んでいる。",
-  },
-  {
-    id: 14,
-    title: "Urban Night",
-    category: "Cityscape",
-    image: img14,
-    height: "h-64",
-    date: "2024.12",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "夜の都市を、ドローンで撮影。ネオンサインが織りなす光のパターンが、都市の生命力を表現している。",
-  },
-  {
-    id: 15,
-    title: "Forest Path",
-    category: "Nature",
-    image: img15,
-    height: "h-[400px]",
-    date: "2024.05",
-    equipment: "LUMIX S5",
-    location: "Yamanashi",
-    description:
-      "森の中の小道を、低いアングルから撮影。木漏れ日が道を照らし、神秘的な雰囲気を醸し出している。",
-  },
-  {
-    id: 16,
-    title: "Commercial Product",
-    category: "Commercial",
-    image: img16,
-    height: "h-96",
-    date: "2024.11",
-    equipment: "LUMIX S5",
-    location: "Studio",
-    description:
-      "商品撮影。ライティングと構図で、製品の質感と美しさを最大限に引き出している。",
-  },
-  {
-    id: 17,
-    title: "Aerial View",
-    category: "Cityscape",
-    image: img17,
-    height: "h-72",
-    date: "2025.02",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "ドローンによる空撮。都市の構造と自然が織りなす、独特のパターンを捉えている。",
-  },
-  {
     id: 18,
-    title: "Nature Portrait",
-    category: "Portrait",
-    image: img18,
-    height: "h-80",
-    date: "2024.10",
-    equipment: "LUMIX S5",
-    location: "Outdoor",
+    title: 'Fuji in Blue Haze',
+    category: 'Landscape',
+    image: portfolioImage(18),
+    featured: true,
+    featuredSize: 'large',
+    orientation: 'wide',
+    date: '2025',
+    location: 'Yamanashi',
     description:
-      "自然の中でのポートレート。背景の自然と被写体が調和し、自然な美しさを表現している。",
+      '富士山と街、塔のシルエットを重ねた風景写真。曇天の青い空気と、春の淡い色を活かして撮影しています。',
   },
   {
-    id: 19,
-    title: "City Lights",
-    category: "Cityscape",
-    image: img19,
-    height: "h-64",
-    date: "2024.09",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
+    id: 1,
+    title: 'Portrait in Window Light',
+    category: 'Portrait',
+    image: portfolioImage(1),
+    featured: true,
+    orientation: 'landscape',
+    date: '2025',
+    location: 'Tokyo',
     description:
-      "夜の都市の光。ドローンによる俯瞰視点で、都市のエネルギーを捉えている。",
-  },
-  {
-    id: 20,
-    title: "Mountain Landscape",
-    category: "Nature",
-    image: img20,
-    height: "h-[500px]",
-    date: "2024.08",
-    equipment: "LUMIX S5",
-    location: "Nagano",
-    description:
-      "山の風景を、ドローンで撮影。雲海と山々が織りなす、壮大な自然の美しさ。",
+      '強い光と影を活かしたポートレート。自然な表情と、印象に残る視線を大切にした一枚です。',
   },
   {
     id: 21,
-    title: "Portrait Session",
-    category: "Portrait",
-    image: img21,
-    height: "h-96",
-    date: "2025.03",
-    equipment: "LUMIX S5",
-    location: "Studio",
+    title: 'Bridge Over Blue Water',
+    category: 'Landscape',
+    image: portfolioImage(21),
+    featured: true,
+    orientation: 'landscape',
+    date: '2025',
+    location: 'Setouchi',
     description:
-      "スタジオでのポートレート撮影。ライティングとポージングで、被写体の魅力を引き出している。",
-  },
-  {
-    id: 22,
-    title: "Urban Architecture",
-    category: "Cityscape",
-    image: img22,
-    height: "h-72",
-    date: "2024.07",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description: "建築物の美しさを、ドローンによる独特のアングルで捉えている。",
-  },
-  {
-    id: 23,
-    title: "Nature Detail",
-    category: "Nature",
-    image: img23,
-    height: "h-80",
-    date: "2024.06",
-    equipment: "LUMIX S5",
-    location: "Outdoor",
-    description:
-      "自然の細部を捉えた一枚。光と影が織りなす、繊細な美しさを表現している。",
-  },
-  {
-    id: 24,
-    title: "Commercial Work",
-    category: "Commercial",
-    image: img24,
-    height: "h-64",
-    date: "2024.05",
-    equipment: "LUMIX S5",
-    location: "Studio",
-    description: "商業撮影。製品の特徴を最大限に活かすライティングと構図。",
-  },
-  {
-    id: 25,
-    title: "Aerial Nature",
-    category: "Nature",
-    image: img25,
-    height: "h-[400px]",
-    date: "2025.01",
-    equipment: "LUMIX S5",
-    location: "Outdoor",
-    description:
-      "ドローンによる自然の空撮。地上からは見えない、自然のパターンを捉えている。",
-  },
-  {
-    id: 26,
-    title: "City Portrait",
-    category: "Portrait",
-    image: img26,
-    height: "h-96",
-    date: "2024.12",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "都市を背景にしたポートレート。都市のエネルギーと被写体の個性が調和している。",
-  },
-  {
-    id: 27,
-    title: "Urban Pattern",
-    category: "Cityscape",
-    image: img27,
-    height: "h-72",
-    date: "2024.11",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "都市のパターンを、ドローンによる俯瞰視点で捉えている。幾何学的な美しさが際立つ。",
+      '海と橋のスケールを広く切り取った風景写真。観光、地域プロモーション、Webキービジュアルを想定した構図です。',
   },
   {
     id: 28,
-    title: "Nature Light",
-    category: "Nature",
-    image: img28,
-    height: "h-80",
-    date: "2024.10",
-    equipment: "LUMIX S5",
-    location: "Outdoor",
+    title: 'Winter Night Gathering',
+    category: 'Event',
+    image: portfolioImage(28),
+    featured: true,
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Tokyo',
     description:
-      "自然光を活かした風景写真。時間と共に変化する光の美しさを捉えている。",
-  },
-  {
-    id: 29,
-    title: "Portrait Light",
-    category: "Portrait",
-    image: img29,
-    height: "h-64",
-    date: "2024.09",
-    equipment: "LUMIX S5",
-    location: "Studio",
-    description:
-      "光を活かしたポートレート。被写体の表情を、優しい光で包み込んでいる。",
-  },
-  {
-    id: 30,
-    title: "Commercial Product 2",
-    category: "Commercial",
-    image: img30,
-    height: "h-[500px]",
-    date: "2024.08",
-    equipment: "LUMIX S5",
-    location: "Studio",
-    description: "商品撮影。製品の質感と機能性を、視覚的に表現している。",
-  },
-  {
-    id: 31,
-    title: "Aerial City",
-    category: "Cityscape",
-    image: img31,
-    height: "h-96",
-    date: "2025.02",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "ドローンによる都市の空撮。都市の規模と構造を、一望できる視点で捉えている。",
-  },
-  {
-    id: 32,
-    title: "Nature Scene",
-    category: "Nature",
-    image: img32,
-    height: "h-72",
-    date: "2024.07",
-    equipment: "LUMIX S5",
-    location: "Outdoor",
-    description:
-      "自然の風景を、ドローンで撮影。地上からは見えない、自然の広がりを表現している。",
-  },
-  {
-    id: 33,
-    title: "Portrait Natural",
-    category: "Portrait",
-    image: img33,
-    height: "h-80",
-    date: "2024.06",
-    equipment: "LUMIX S5",
-    location: "Outdoor",
-    description: "自然の中でのポートレート。自然な表情と環境が調和した一枚。",
-  },
-  {
-    id: 34,
-    title: "Urban Detail",
-    category: "Cityscape",
-    image: img34,
-    height: "h-64",
-    date: "2024.05",
-    equipment: "LUMIX S5",
-    location: "Tokyo",
-    description:
-      "都市の細部を捉えた一枚。日常の中にある、美しい瞬間を切り取っている。",
+      '夜の街でのグループ撮影。イベントや記念日の空気感を、明るさと温度が伝わる形で残します。',
   },
   {
     id: 35,
-    title: "Commercial Brand",
-    category: "Commercial",
-    image: img35,
-    height: "h-[400px]",
-    date: "2025.01",
-    equipment: "LUMIX S5",
-    location: "Studio",
+    title: 'Framed Interior',
+    category: 'Commercial',
+    image: portfolioImage(35),
+    featured: true,
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Tokyo',
     description:
-      "ブランドビジュアルの撮影。ブランドの世界観を、視覚的に表現している。",
+      '店舗や空間の雰囲気を伝えるための一枚。内装、飲食店、ブランド紹介の素材として使いやすい写真です。',
+  },
+  {
+    id: 23,
+    title: 'Morning Route',
+    category: 'Aerial',
+    image: portfolioImage(23),
+    featured: true,
+    orientation: 'portrait',
+    date: '2025',
+    location: 'Japan',
+    description:
+      '高い視点から朝の光を捉えた写真。地上とは違う角度で、場所の広がりと道の流れを見せます。',
+  },
+  {
+    id: 12,
+    title: 'Mt. Fuji and White Waves',
+    category: 'Landscape',
+    image: portfolioImage(12),
+    featured: true,
+    featuredSize: 'large',
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Shizuoka',
+    description:
+      '波と富士山を同時に写した風景写真。自然の動きと遠景の静けさを対比させています。',
+  },
+  {
+    id: 31,
+    title: 'Tokyo Station Portrait',
+    category: 'Portrait',
+    image: portfolioImage(31),
+    featured: true,
+    orientation: 'portrait',
+    date: '2025',
+    location: 'Tokyo',
+    description:
+      '都市の背景を活かしたポートレート。プロフィールや宣材に使いやすい、場所の個性が伝わる撮影です。',
+  },
+  {
+    id: 30,
+    title: 'Firelight Event',
+    category: 'Event',
+    image: portfolioImage(30),
+    featured: true,
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Japan',
+    description:
+      '炎と人の距離感を記録したイベント写真。暗い環境でも場の熱量が伝わるように撮影しています。',
+  },
+  {
+    id: 25,
+    title: 'Glass Facade',
+    category: 'Commercial',
+    image: portfolioImage(25),
+    featured: true,
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Tokyo',
+    description:
+      '建築や施設の外観撮影。反射や構造を活かして、施設の印象を整えて伝えます。',
   },
   {
     id: 36,
-    title: "Final Work",
-    category: "Nature",
-    image: img36,
-    height: "h-96",
-    date: "2024.04",
-    equipment: "LUMIX S5",
-    location: "Outdoor",
-    description: "自然の美しさを、ドローンによる独特の視点で捉えた最終作品。",
+    title: 'Coastal Portrait',
+    category: 'Portrait',
+    image: portfolioImage(36),
+    featured: true,
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Kanagawa',
+    description:
+      '海辺で撮影した自然なポートレート。人物と風景の両方を活かした撮影に向いています。',
+  },
+  {
+    id: 14,
+    title: 'Crossing Geometry',
+    category: 'Aerial',
+    image: portfolioImage(14),
+    featured: true,
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Tokyo',
+    description:
+      '都市を上から見たグラフィカルな一枚。人の流れと街の形を、俯瞰の視点で整理しています。',
+  },
+  {
+    id: 2,
+    title: 'Soft Outdoor Portrait',
+    category: 'Portrait',
+    image: portfolioImage(2),
+    orientation: 'portrait',
+    date: '2024',
+    location: 'Tokyo',
+    description:
+      'やわらかい自然光で撮影したポートレート。SNSやプロフィール用途に適した雰囲気です。',
+  },
+  {
+    id: 4,
+    title: 'Street Portrait',
+    category: 'Portrait',
+    image: portfolioImage(4),
+    orientation: 'portrait',
+    date: '2024',
+    location: 'Tokyo',
+    description:
+      '街中でのスナップポートレート。自然体の表情とロケーションの温度を組み合わせます。',
+  },
+  {
+    id: 33,
+    title: 'Field Session',
+    category: 'Portrait',
+    image: portfolioImage(33),
+    orientation: 'portrait',
+    date: '2024',
+    location: 'Japan',
+    description:
+      '屋外の空気感を活かした人物撮影。風景に人物をなじませた自然な見せ方です。',
+  },
+  {
+    id: 34,
+    title: 'Sunset Silhouette',
+    category: 'Portrait',
+    image: portfolioImage(34),
+    orientation: 'portrait',
+    date: '2024',
+    location: 'Kanagawa',
+    description:
+      '夕暮れの逆光を使ったシルエット。個人作品やビジュアル制作に向いた印象的なカットです。',
+  },
+  {
+    id: 5,
+    title: 'Waterfall Spectrum',
+    category: 'Landscape',
+    image: portfolioImage(5),
+    orientation: 'portrait',
+    date: '2024',
+    location: 'Japan',
+    description:
+      '滝と虹を捉えた風景写真。自然の色と水の動きが伝わる一枚です。',
+  },
+  {
+    id: 7,
+    title: 'Spring Color',
+    category: 'Landscape',
+    image: portfolioImage(7),
+    orientation: 'portrait',
+    date: '2024',
+    location: 'Japan',
+    description:
+      '春の花を前景にした風景写真。季節感を伝える観光、地域素材にも使いやすい構図です。',
+  },
+  {
+    id: 19,
+    title: 'Wisteria Night',
+    category: 'Landscape',
+    image: portfolioImage(19),
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Japan',
+    description:
+      '夜の藤棚を撮影した作品。暗い背景に浮かぶ色を丁寧に残しています。',
+  },
+  {
+    id: 20,
+    title: 'Kyoto Night Street',
+    category: 'Landscape',
+    image: portfolioImage(20),
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Kyoto',
+    description:
+      '夜の街並みを撮影した風景写真。旅先の記憶や地域の空気感を伝えるカットです。',
+  },
+  {
+    id: 16,
+    title: 'Wind Farm Sunset',
+    category: 'Aerial',
+    image: portfolioImage(16),
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Japan',
+    description:
+      '夕景と風車を組み合わせたスケール感のある写真。施設、自然、産業の印象づくりに適しています。',
+  },
+  {
+    id: 17,
+    title: 'Night Signage',
+    category: 'Commercial',
+    image: portfolioImage(17),
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Tokyo',
+    description:
+      '夜の看板と街の質感を切り取った写真。店舗紹介や街のイメージカットに向いています。',
+  },
+  {
+    id: 24,
+    title: 'Sea View Frame',
+    category: 'Commercial',
+    image: portfolioImage(24),
+    orientation: 'portrait',
+    date: '2024',
+    location: 'Kanagawa',
+    description:
+      '窓や建築のフレーム越しに海を見せた写真。宿泊施設、店舗、観光素材に使いやすい一枚です。',
+  },
+  {
+    id: 29,
+    title: 'Travel Moment',
+    category: 'Event',
+    image: portfolioImage(29),
+    orientation: 'landscape',
+    date: '2024',
+    location: 'Japan',
+    description:
+      '旅先での体験や場の雰囲気を残した写真。イベント記録や観光コンテンツにも展開できます。',
   },
 ];
 
 export const SERVICE_DATA: ServiceItem[] = [
   {
-    title: "Standard Plan",
-    price: "¥30,000~",
+    title: 'Portrait',
+    label: 'プロフィール・宣材',
+    price: '30,000円から',
     description:
-      "プロフィール写真、宣材写真、記念写真など。\n高品質なポートレートを手軽に。",
-    features: [
-      "撮影時間: 1時間",
-      "納品枚数: 30カット",
-      "オンライン納品",
-      "レタッチ済み",
-    ],
+      'SNS、Web、プロフィール、アーティスト写真など、目的に合わせて自然な表情を撮影します。',
+    uses: ['プロフィール写真', '宣材写真', 'SNSアイコン', 'アーティスト写真'],
   },
   {
-    title: "Wedding / Event",
-    price: "¥120,000~",
+    title: 'Commercial',
+    label: '店舗・商品・ブランド',
+    price: '要相談',
     description:
-      "結婚式、パーティー、イベント撮影。\n物語性のあるドキュメンタリースタイルで。",
-    features: [
-      "撮影時間: 4時間〜",
-      "納品枚数: 300カット〜",
-      "フォトブック作成可",
-      "全データ補正",
-    ],
+      '店舗、商品、サービス、採用、WebサイトやSNSで使うビジュアル素材を制作します。',
+    uses: ['店舗撮影', '商品撮影', 'ブランド素材', 'Web/SNS素材'],
   },
   {
-    title: "Commercial",
-    price: "Ask",
+    title: 'Event',
+    label: 'イベント・記録',
+    price: '50,000円から',
     description:
-      "広告、商品、建築、ブランドビジュアル。\nディレクションから納品までトータルサポート。",
-    features: [
-      "事前打ち合わせ",
-      "モデル・スタジオ手配",
-      "高度なレタッチ",
-      "著作権譲渡可",
-    ],
+      'イベント、展示、ライブ、記念日など、当日の空気感と人の表情を記録します。',
+    uses: ['イベント記録', 'ライブ撮影', '展示記録', '記念日撮影'],
+  },
+  {
+    title: 'Aerial',
+    label: '空撮・俯瞰撮影',
+    price: '要相談',
+    description:
+      '風景、施設、観光、プロモーション向けに、地上撮影と組み合わせた空撮をご提案します。撮影場所の許可・法令確認が必要なため、事前にご相談ください。',
+    uses: ['風景空撮', '施設紹介', '観光素材', 'プロモーション'],
+  },
+];
+
+export const FLOW_DATA: FlowItem[] = [
+  {
+    step: '01',
+    title: 'Contact',
+    description: '撮影内容が固まっていない段階でも、お気軽にご相談ください。',
+  },
+  {
+    step: '02',
+    title: 'Estimate',
+    description: '用途、場所、納品点数を確認し、撮影内容とお見積もりを整理します。',
+  },
+  {
+    step: '03',
+    title: 'Schedule',
+    description: '撮影日程、集合場所、天候や許可の確認を行います。',
+  },
+  {
+    step: '04',
+    title: 'Shooting',
+    description: '当日の流れに合わせて、必要なカットを丁寧に撮影します。',
+  },
+  {
+    step: '05',
+    title: 'Retouch',
+    description: 'セレクト後、用途に合わせた色調整と基本レタッチを行います。',
+  },
+  {
+    step: '06',
+    title: 'Delivery',
+    description: 'オンラインで納品します。納期は内容により事前にお伝えします。',
   },
 ];
 
 export const FAQ_DATA: FaqItem[] = [
   {
-    q: "納品までの期間はどのくらいですか？",
-    a: "通常、撮影日から2週間程度いただいております。お急ぎの場合はオプションにて対応可能です。",
+    q: '撮影内容がまだ曖昧でも相談できますか？',
+    a: 'はい。使用目的や雰囲気を伺いながら、撮影内容や必要なカットをご提案します。',
   },
   {
-    q: "撮影場所の指定は可能ですか？",
-    a: "はい、可能です。東京都内であれば出張費は無料ですが、遠方の場合は別途交通費を頂戴しております。",
+    q: '川崎・横浜以外でも撮影できますか？',
+    a: '可能です。場所により交通費や出張費が発生するため、事前にお見積もりします。',
   },
   {
-    q: "衣装やメイクの手配はできますか？",
-    a: "提携しているスタイリスト、ヘアメイクアップアーティストをご紹介可能です（別途費用）。",
+    q: '納品まではどのくらいかかりますか？',
+    a: '内容にもよりますが、通常は撮影後1から2週間程度を目安にしています。',
   },
   {
-    q: "雨天の場合はどうなりますか？",
-    a: "屋内の場合は決行いたします。屋外撮影の場合は、前日の天気予報で判断し、日程変更を無料で承ります。",
+    q: '空撮はどこでも依頼できますか？',
+    a: '空撮は法令、場所の許可、天候、安全確認が必要です。撮影可否を確認したうえでご提案します。',
   },
 ];

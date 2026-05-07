@@ -1,32 +1,137 @@
-import { X, Calendar, Camera, MapPin } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, MapPin, Tag, X } from 'lucide-react';
 import { WorkItem } from '../../types';
 
-const WorkModal = ({ work, onClose }: { work: WorkItem | null; onClose: () => void }) => {
+const categoryLabel = (category: WorkItem['category']) =>
+  category === 'Commercial' ? 'Shop / Brand' : category;
+
+const WorkModal = ({
+  work,
+  onClose,
+  onPrevious,
+  onNext,
+}: {
+  work: WorkItem | null;
+  onClose: () => void;
+  onPrevious?: () => void;
+  onNext?: () => void;
+}) => {
   if (!work) return null;
+
   return (
-    <div className="fixed inset-0 z-[60] bg-zinc-950/95 flex items-center justify-center p-4 md:p-12 animate-fade-in" onClick={onClose}>
-      <button onClick={onClose} className="absolute top-6 right-6 text-white hover:rotate-90 transition-transform duration-300"><X size={32} /></button>
-      <div className="flex flex-col md:flex-row gap-12 max-w-7xl w-full h-full md:h-auto items-center" onClick={e => e.stopPropagation()}>
-        <div className={`w-full md:w-2/3 h-[50vh] md:h-[80vh] relative shadow-2xl overflow-hidden rounded-sm group`}>
-            <img src={work.image} alt={work.title} className="w-full h-full object-contain bg-zinc-900" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-stone-950/95 p-4 text-white backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center border border-white/25 text-white transition-colors hover:bg-white hover:text-stone-950"
+        aria-label="Close work detail"
+      >
+        <X size={22} />
+      </button>
+
+      {onPrevious && (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onPrevious();
+          }}
+          className="absolute left-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center border border-white/25 text-white transition-colors hover:bg-white hover:text-stone-950 md:flex"
+          aria-label="Previous work"
+        >
+          <ChevronLeft size={24} />
+        </button>
+      )}
+
+      {onNext && (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onNext();
+          }}
+          className="absolute right-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center border border-white/25 text-white transition-colors hover:bg-white hover:text-stone-950 md:flex"
+          aria-label="Next work"
+        >
+          <ChevronRight size={24} />
+        </button>
+      )}
+
+      <div
+        className="grid max-h-[90vh] w-full max-w-7xl gap-6 overflow-y-auto md:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.55fr)] md:items-center"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex min-h-[45vh] items-center justify-center bg-black md:min-h-[78vh]">
+          <img
+            src={work.image}
+            alt={work.title}
+            className="max-h-[78vh] w-full object-contain"
+          />
         </div>
-        <div className="w-full md:w-1/3 text-white space-y-8 animate-fade-in-up">
-          <div>
-            <p className="text-zinc-500 text-sm tracking-widest uppercase mb-2">{work.category}</p>
-            <h2 className="text-4xl md:text-5xl font-serif mb-6">{work.title}</h2>
-            <p className="text-zinc-400 leading-relaxed font-light">{work.description}</p>
+
+        <aside className="border border-white/10 bg-white/[0.03] p-6 md:p-8">
+          <p className="mb-3 text-xs uppercase tracking-[0.28em] text-white/65">
+            {categoryLabel(work.category)}
+          </p>
+          <h2 className="font-serif text-4xl leading-tight md:text-5xl">
+            {work.title}
+          </h2>
+          <p className="mt-6 text-sm leading-8 text-white/80">
+            {work.description}
+          </p>
+
+          <dl className="mt-8 grid gap-4 border-t border-white/10 pt-6 text-sm">
+            <div className="flex items-center justify-between gap-4">
+              <dt className="inline-flex items-center gap-2 text-white/65">
+                <Tag size={15} />
+                Category
+              </dt>
+              <dd>{categoryLabel(work.category)}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt className="inline-flex items-center gap-2 text-white/65">
+                <Calendar size={15} />
+                Year
+              </dt>
+              <dd>{work.date}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt className="inline-flex items-center gap-2 text-white/65">
+                <MapPin size={15} />
+                Location
+              </dt>
+              <dd>{work.location}</dd>
+            </div>
+          </dl>
+
+          <div className="mt-8 grid grid-cols-2 gap-3 md:hidden">
+            {onPrevious && (
+              <button
+                type="button"
+                onClick={onPrevious}
+                className="inline-flex items-center justify-center gap-2 border border-white/20 py-3 text-sm"
+              >
+                <ChevronLeft size={16} />
+                Prev
+              </button>
+            )}
+            {onNext && (
+              <button
+                type="button"
+                onClick={onNext}
+                className="inline-flex items-center justify-center gap-2 border border-white/20 py-3 text-sm"
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            )}
           </div>
-          <div className="border-t border-zinc-800 pt-8 space-y-4 text-sm font-mono text-zinc-500">
-             <div className="flex justify-between items-center"><span className="flex items-center gap-2"><Calendar size={14}/> Date</span> <span className="text-zinc-300">{work.date}</span></div>
-             <div className="flex justify-between items-center"><span className="flex items-center gap-2"><Camera size={14}/> Gear</span> <span className="text-zinc-300">{work.equipment}</span></div>
-             <div className="flex justify-between items-center"><span className="flex items-center gap-2"><MapPin size={14}/> Location</span> <span className="text-zinc-300">{work.location}</span></div>
-          </div>
-        </div>
+        </aside>
       </div>
     </div>
   );
 };
 
 export default WorkModal;
-

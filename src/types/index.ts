@@ -1,36 +1,49 @@
-export type Page = 'home' | 'works' | 'service' | 'news' | 'contact' | 'photographer' | 'ai-photographer';
-export type WorkCategory = 'All' | 'Cityscape' | 'Nature' | 'Portrait' | 'Commercial';
+export type Page =
+  | 'home'
+  | 'works'
+  | 'service'
+  | 'about'
+  | 'contact'
+  | 'news'
+  | 'photographer'
+  | 'ai-photographer';
 
-export interface NewsItem {
-  id: number;
-  date: string;
-  category: string;
-  title: string;
-  content: string;
-}
+export type WorkCategory =
+  | 'All'
+  | 'Portrait'
+  | 'Landscape'
+  | 'Aerial'
+  | 'Commercial'
+  | 'Event';
 
 export interface WorkItem {
   id: number;
   title: string;
-  category: WorkCategory;
+  category: Exclude<WorkCategory, 'All'>;
   image: string;
-  imageColor?: string;
-  height: string;
+  featured?: boolean;
+  featuredSize?: 'large';
+  orientation: 'landscape' | 'portrait' | 'square' | 'wide';
   date: string;
-  equipment: string;
   location: string;
   description: string;
 }
 
 export interface ServiceItem {
   title: string;
+  label: string;
   price: string;
   description: string;
-  features: string[];
+  uses: string[];
+}
+
+export interface FlowItem {
+  step: string;
+  title: string;
+  description: string;
 }
 
 export interface FaqItem {
   q: string;
   a: string;
 }
-
