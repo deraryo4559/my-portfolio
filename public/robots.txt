@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://deraryo4559.github.io/my-portfolio/sitemap.xml
+Sitemap: https://ryo-onodera.com/my-portfolio/sitemap.xml
 

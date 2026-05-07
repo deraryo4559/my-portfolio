@@ -293,21 +293,93 @@ Cloudflare Pages が自動でビルドとデプロイを行います（2〜5分�
 
 ## 日常の更新フロー
 
-デプロイ完了後は、以下の手順だけでサイトが更新されます。
+デプロイ完了後は、ローカルでコードを変更して `main` ブランチへ push するだけで、
+`https://ryo-onodera.com/my-portfolio/` に自動反映されます。
+
+現在の本番デプロイ方針:
+
+| 項目 | 設定値 |
+|------|--------|
+| Production branch | `main` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | 空欄（リポジトリルート） |
+| 自動デプロイ | 有効（`main` への push を検知） |
+| 本番URL | `https://ryo-onodera.com/my-portfolio/` |
+| Pages URL | `my-portfolio-93g.pages.dev` |
+| Worker | `my-portfolio-router` |
+
+反映の流れ:
 
 ```
 コードを編集・保存
+    ↓
+必要に応じてローカル確認
     ↓
 git add .
 git commit -m "変更内容"
 git push origin main
     ↓
-Cloudflare Pages が自動でビルド開始（2〜5分）
+Cloudflare Pages が `main` への push を検知
+    ↓
+Cloudflare Pages が `npm run build` を実行
+    ↓
+生成された `dist/` が Pages にデプロイされる
+    ↓
+Worker が `/my-portfolio/*` を Pages に転送する
     ↓
 https://ryo-onodera.com/my-portfolio/ に反映される
 ```
 
-ビルドの進捗は Cloudflare ダッシュボード → **Workers & Pages** → プロジェクト名 → **Deployments** で確認できます。
+### 通常の更新手順
+
+1. ローカルでコードや画像を変更する
+2. 可能であればローカルで確認する
+
+```bash
+npm run build
+npm run preview
+```
+
+3. 問題なければ Git に反映する
+
+```bash
+git add .
+git commit -m "Update portfolio site"
+git push origin main
+```
+
+4. Cloudflare Pages の自動デプロイ完了を待つ（目安: 2〜5分）
+5. `https://ryo-onodera.com/my-portfolio/` を開いて反映を確認する
+
+### デプロイ状況の確認場所
+
+Cloudflare ダッシュボードで以下を確認します。
+
+1. **Workers & Pages** を開く
+2. Pages プロジェクト（`my-portfolio` または `my-portfolio-93g`）を開く
+3. **Deployments** タブを開く
+4. 最新の Production deployment が `Success` になっていることを確認する
+5. デプロイ対象のブランチが `main`、コミットが直近の `git push` のものになっていることを確認する
+
+### 重要な注意点
+
+- `npm run deploy` は GitHub Pages の `gh-pages` ブランチ用の旧運用です。Cloudflare Pages 運用では通常使いません。
+- `dist/` はローカルで生成されるビルド成果物です。Cloudflare Pages が本番デプロイ時に自動生成するため、基本的に Git 管理しません。
+- `vite.config.ts` の `base: '/my-portfolio/'` は変更しません。
+- Worker は `ryo-onodera.com/my-portfolio/*` へのアクセスから `/my-portfolio` を取り除き、`my-portfolio-93g.pages.dev` に転送します。
+- 画像を追加するときは、1ファイルが大きすぎないようにします。Cloudflare Pages は1ファイル25MiB超のアップロードに失敗します。Web表示用の画像はおおむね1〜3MB以下を目安にしてください。
+
+### 更新が反映されないとき
+
+以下を順番に確認します。
+
+1. `git push origin main` が成功しているか
+2. Cloudflare Pages の最新 Production deployment が `Success` になっているか
+3. Production branch が `main` のままになっているか
+4. Build command が `npm run build`、Build output directory が `dist` になっているか
+5. ブラウザをハードリロードする
+6. それでも古い場合は、Cloudflare Pages の Deployments から最新デプロイを **Retry deployment** する
 
 ---
 
